@@ -1,5 +1,4 @@
 // Faster setTimeout(fn, 0) implementation using postMessage API
-// Based on https://dbaron.org/log/20100309-faster-timeouts
 export type IMicroTaskCallback = () => void;
 
 export class MicroTaskScheduler {
