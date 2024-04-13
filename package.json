@@ -4,8 +4,9 @@
   "private": true,
   "dependencies": {
     "@wokwi/elements": "^0.16.1",
-    "avr8js": "^0.14.2",
-    "lit-html": "^1.2.1"
+    "avr8js": "^0.14.10",
+    "lit-html": "^1.2.1",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.12.7"

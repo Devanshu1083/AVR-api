@@ -1,12 +1,10 @@
-import '@wokwi/elements';
+
 import { PinState } from 'avr8js';
 import * as net from 'net';
 import { buildHex } from './compile';
 import { CPUPerformance } from './cpu-performance';
 import { AVRRunner } from './execute';
 import { formatTime } from './format-time';
-import './index.css';
-import { receiveMessageOnPort } from 'worker_threads';
 
 const clientSockets = new Map();
 function generateClientId() {
@@ -92,17 +90,17 @@ function executeProgram(hex: string) {
     //digital write
     for (let i = 0; i < digitalPins.length; i++) {
       if(i<8){
-        digitalPins[i] = (runner.portB.pinState(i) === PinState.High)? 1024 : 0;
+        digitalPins[i] = (runner.portB.pinState(i) === PinState.High)? 1023 : 0;
       }else{
-        digitalPins[i] = (runner.portD.pinState(i-8) === PinState.High)? 1024 : 0;
+        digitalPins[i] = (runner.portD.pinState(i-8) === PinState.High)? 1023 : 0;
       }
     }
     //digital read
     for (let i = 0; i < digitalPins.length; i++) {
       if(i<8 &&((runner.portB.pinState(i) !== PinState.High) && (runner.portB.pinState(i) !== PinState.Low))){
-        runner.portB.setPin(i, digRead[i]!==0 ? PinState.High : PinState.Low);
+        runner.portB.setPin(i, (digRead[i]!==0 ? true : false));
       }else if(i>7 &&((runner.portB.pinState(i-8) !== PinState.High) && (runner.portB.pinState(i-8) !== PinState.Low))){
-        runner.portD.setPin(i-8, digRead[i]!==0 ? PinState.High : PinState.Low);
+        runner.portD.setPin(i-8, (digRead[i]!==0 ? true : false));
       }
     }
     //analogWrite
@@ -154,34 +152,36 @@ function stopCode() {
 
 const port: number = 3000;
 
-const server: net.Server = net.createServer((socket: net.Socket) => {
-    console.log('Client connected');
+const server: net.Server = net.createServer(
+//   (socket: net.Socket) => {
+//     console.log('Client connected');
 
-    // Handle incoming data
-    socket.on('data', (data: Buffer) => {
-        const receivedData: string = data.toString().trim();
-        if(receivedData === 'start'){
-          compileAndRun();
-        }else if(receivedData==='stop'){
-          stopCode();
-        }else if(receivedData==='readState'){
-          const jsonDigitalPins = JSON.stringify(digitalPins);
-          socket.write(jsonDigitalPins);
-        }
-        console.log('Received data:', receivedData);
-        // Handle the received data if needed
-    });
+//     // Handle incoming data
+//     socket.on('data', (data) => {
+//         const receivedData: string = data.toString().trim();
+//         if(receivedData === 'start'){
+//           compileAndRun();
+//         }else if(receivedData==='stop'){
+//           stopCode();
+//         }else if(receivedData==='readState'){
+//           const jsonDigitalPins = JSON.stringify(digitalPins);
+//           socket.write(jsonDigitalPins);
+//         }
+//         console.log('Received data:', receivedData);
+//         // Handle the received data if needed
+//     });
 
-    // Handle client disconnection
-    socket.on('end', () => {
-        console.log('Client disconnected');
-    });
-});
+//     // Handle client disconnection
+//     socket.on('end', () => {
+//         console.log('Client disconnected');
+//     });
+// }
+);
 
 server.on("connection", (socket) => { 
   console.log("new client connection is made", socket.remoteAddress + ":" + socket.remotePort); 
   // Handle incoming data
-  socket.on('data', (data: Buffer) => {
+  socket.on('data', (data) => {
     const receivedData: string = data.toString().trim();
     if(receivedData === 'start'){
       compileAndRun();
