@@ -153,29 +153,6 @@ function stopCode() {
 const port: number = 3000;
 
 const server: net.Server = net.createServer(
-//   (socket: net.Socket) => {
-//     console.log('Client connected');
-
-//     // Handle incoming data
-//     socket.on('data', (data) => {
-//         const receivedData: string = data.toString().trim();
-//         if(receivedData === 'start'){
-//           compileAndRun();
-//         }else if(receivedData==='stop'){
-//           stopCode();
-//         }else if(receivedData==='readState'){
-//           const jsonDigitalPins = JSON.stringify(digitalPins);
-//           socket.write(jsonDigitalPins);
-//         }
-//         console.log('Received data:', receivedData);
-//         // Handle the received data if needed
-//     });
-
-//     // Handle client disconnection
-//     socket.on('end', () => {
-//         console.log('Client disconnected');
-//     });
-// }
 );
 
 server.on("connection", (socket) => { 
@@ -191,8 +168,6 @@ server.on("connection", (socket) => {
       const jsonDigitalPins = JSON.stringify(digitalPins);
       socket.write(jsonDigitalPins);
     }
-    console.log('Received data:', receivedData);
-    // Handle the received data if needed
   });
 
   // Handle client disconnection
